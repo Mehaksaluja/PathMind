@@ -1,51 +1,148 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Navbar from '@/components/layout/Navbar'
 import styles from './login.module.css'
 
 export default function LoginPage() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const particles: Array<{ x: number; y: number; radius: number; vx: number; vy: number; opacity: number }> = []
+
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        opacity: Math.random() * 0.5 + 0.2
+      })
+    }
+
+    let animationFrame: number
+
+    function animate() {
+      if (!ctx || !canvas) return
+
+      ctx.fillStyle = 'rgba(10, 10, 20, 0.05)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      particles.forEach(particle => {
+        particle.x += particle.vx
+        particle.y += particle.vy
+
+        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1
+        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1
+
+        ctx.beginPath()
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(138, 43, 226, ${particle.opacity})`
+        ctx.fill()
+      })
+
+      animationFrame = requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    const handleResize = () => {
+      if (canvas) {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      cancelAnimationFrame(animationFrame)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Welcome Back</h1>
-        <p className={styles.subtitle}>Sign in to continue your learning journey</p>
-        
-        <form className={styles.form}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              required
-            />
+      <Navbar />
+      <canvas ref={canvasRef} className={styles.canvas} />
+      
+      <div className={styles.background}>
+        <div className={styles.gradientOrb1}></div>
+        <div className={styles.gradientOrb2}></div>
+        <div className={styles.gradientOrb3}></div>
+      </div>
+
+      <div className={styles.content}>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h1 className={styles.title}>Welcome Back</h1>
+            <p className={styles.subtitle}>Sign in to continue your learning journey</p>
           </div>
           
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-            />
+          <form className={styles.form}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="email">Email</label>
+              <div className={styles.inputWrapper}>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  required
+                  className={styles.input}
+                />
+                <span className={styles.inputFocus}></span>
+              </div>
+            </div>
+            
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">Password</label>
+              <div className={styles.inputWrapper}>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+                  className={styles.input}
+                />
+                <span className={styles.inputFocus}></span>
+              </div>
+            </div>
+            
+            <button type="submit" className={styles.submitButton}>
+              <span>Sign In</span>
+              <span className={styles.buttonShine}></span>
+            </button>
+          </form>
+          
+          <div className={styles.divider}>
+            <span>or</span>
           </div>
           
-          <button type="submit" className={styles.submitButton}>
-            Sign In
-          </button>
-        </form>
-        
-        <p className={styles.footer}>
-          Don't have an account?{' '}
-          <Link href="/signup" className={styles.link}>
-            Sign up
+          <p className={styles.footer}>
+            Don't have an account?{' '}
+            <Link href="/signup" className={styles.link}>
+              Sign up
+            </Link>
+          </p>
+
+          <Link href="/" className={styles.backLink}>
+            ← Back to Home
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   )
 }
-

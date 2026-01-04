@@ -1,0 +1,368 @@
+.cta {
+  position: relative;
+  background: linear-gradient(180deg, #1a0a2e 0%, #0a0a14 100%);
+  color: white;
+  padding: 10rem 2rem;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ctaBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.ctaGradientOrb1,
+.ctaGradientOrb2,
+.ctaGradientOrb3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  animation: ctaFloat 15s ease-in-out infinite;
+}
+
+.ctaGradientOrb1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(138, 43, 226, 0.5) 0%, transparent 70%);
+  top: -200px;
+  left: -200px;
+  animation-delay: 0s;
+}
+
+.ctaGradientOrb2 {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(74, 0, 224, 0.4) 0%, transparent 70%);
+  bottom: -250px;
+  right: -250px;
+  animation-delay: 5s;
+}
+
+.ctaGradientOrb3 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(106, 13, 173, 0.4) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 10s;
+}
+
+@keyframes ctaFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.6;
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+    opacity: 0.5;
+  }
+}
+
+.ctaContent {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.ctaIcon {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.8));
+  animation: iconBounce 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(10deg);
+  }
+}
+
+.ctaTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0ff 50%, #8a2be2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 25px rgba(138, 43, 226, 0.8));
+  }
+}
+
+.ctaSubtitle {
+  font-size: 1.3rem;
+  margin-bottom: 3rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.8;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.ctaButton {
+  background: linear-gradient(135deg, #8a2be2 0%, #4a00e0 100%);
+  color: white;
+  padding: 1.5rem 4rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: inline-block;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(138, 43, 226, 0.5);
+  border: 2px solid transparent;
+}
+
+.ctaButton:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 15px 50px rgba(138, 43, 226, 0.7);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ctaSecondaryButton {
+  background: transparent;
+  color: white;
+  padding: 1.5rem 4rem;
+  border: 2px solid rgba(138, 43, 226, 0.6);
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaSecondaryButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.ctaSecondaryButton:hover {
+  border-color: #8a2be2;
+  background: rgba(138, 43, 226, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4);
+}
+
+.ctaSecondaryButton:hover::before {
+  left: 100%;
+}
+
+.buttonShine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.ctaFeatures {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 3rem;
+}
+
+.ctaFeature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.ctaFeatureIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8a2be2, #4a00e0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .cta {
+    padding: 8rem 2rem;
+  }
+  
+  .ctaTitle {
+    font-size: 3rem;
+  }
+  
+  .ctaGradientOrb1 {
+    width: 500px;
+    height: 500px;
+  }
+  
+  .ctaGradientOrb2 {
+    width: 600px;
+    height: 600px;
+  }
+  
+  .ctaGradientOrb3 {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .cta {
+    padding: 6rem 2rem;
+  }
+  
+  .ctaIcon {
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .ctaTitle {
+    font-size: 2.75rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+  
+  .ctaSubtitle {
+    font-size: 1.15rem;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+  
+  .ctaButtons {
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .ctaButton,
+  .ctaSecondaryButton {
+    padding: 1.25rem 3rem;
+    font-size: 1.15rem;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .ctaFeatures {
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+  
+  .ctaFeature {
+    font-size: 1rem;
+    justify-content: center;
+  }
+  
+  .ctaGradientOrb1 {
+    width: 400px;
+    height: 400px;
+    top: -150px;
+    left: -150px;
+  }
+  
+  .ctaGradientOrb2 {
+    width: 500px;
+    height: 500px;
+    bottom: -200px;
+    right: -200px;
+  }
+  
+  .ctaGradientOrb3 {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .cta {
+    padding: 5rem 1.5rem;
+  }
+  
+  .ctaIcon {
+    font-size: 3rem;
+  }
+  
+  .ctaTitle {
+    font-size: 2.25rem;
+  }
+  
+  .ctaSubtitle {
+    font-size: 1.05rem;
+  }
+  
+  .ctaButtons {
+    max-width: 100%;
+  }
+  
+  .ctaButton,
+  .ctaSecondaryButton {
+    padding: 1.15rem 2.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .ctaFeature {
+    font-size: 0.95rem;
+  }
+}
+

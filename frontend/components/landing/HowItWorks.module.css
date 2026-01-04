@@ -1,0 +1,437 @@
+.container {
+  min-height: 100vh;
+  background: #0a0a14;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Hero Section */
+.heroSection {
+  padding: 8rem 2rem 6rem;
+  text-align: center;
+  background: linear-gradient(180deg, #0a0a14 0%, #1a0a2e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(74, 0, 224, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: rgba(138, 43, 226, 0.15);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0ff 50%, #8a2be2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Steps Section */
+.stepsSection {
+  padding: 6rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.stepsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.stepWrapper {
+  position: relative;
+}
+
+.stepCard {
+  background: rgba(20, 10, 40, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(138, 43, 226, 0.15);
+  border-radius: 16px;
+  padding: 3rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stepCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #8a2be2, #4a00e0);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stepCard:hover {
+  background: rgba(20, 10, 40, 0.6);
+  border-color: rgba(138, 43, 226, 0.4);
+  transform: translateX(8px);
+  box-shadow: 0 10px 40px rgba(138, 43, 226, 0.2);
+}
+
+.stepCard:hover::before {
+  opacity: 1;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stepNumber {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(138, 43, 226, 0.6);
+  background: rgba(138, 43, 226, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  letter-spacing: 1px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.stepIcon {
+  font-size: 2.5rem;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(74, 0, 224, 0.2));
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.stepCard:hover .stepIcon {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(74, 0, 224, 0.3));
+  border-color: rgba(138, 43, 226, 0.5);
+  transform: scale(1.05);
+}
+
+.stepContent {
+  padding-left: 0;
+}
+
+.stepTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.stepDescription {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  max-width: 700px;
+}
+
+.stepConnector {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.connectorLine {
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(180deg, rgba(138, 43, 226, 0.4), rgba(138, 43, 226, 0.1));
+  position: relative;
+}
+
+.connectorLine::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: rgba(138, 43, 226, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+/* CTA Section */
+.ctaSection {
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, #1a0a2e 0%, #0a0a14 100%);
+  position: relative;
+}
+
+.ctaContent {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctaTitle {
+  font-size: 2.75rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #8a2be2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.ctaSubtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaButton {
+  background: linear-gradient(135deg, #8a2be2 0%, #4a00e0 100%);
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(138, 43, 226, 0.4);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(138, 43, 226, 0.5);
+  border-color: rgba(138, 43, 226, 0.5);
+}
+
+.ctaSecondaryButton {
+  background: transparent;
+  color: white;
+  padding: 1rem 2.5rem;
+  border: 1px solid rgba(138, 43, 226, 0.5);
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+}
+
+.ctaSecondaryButton:hover {
+  background: rgba(138, 43, 226, 0.1);
+  border-color: rgba(138, 43, 226, 0.7);
+  transform: translateY(-2px);
+}
+
+.backToHome {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.homeLink {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.homeLink:hover {
+  color: rgba(255, 255, 255, 1);
+  transform: translateX(-5px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .heroTitle {
+    font-size: 3rem;
+  }
+  
+  .stepsSection {
+    padding: 5rem 2rem;
+  }
+  
+  .stepCard {
+    padding: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 6rem 1.5rem 4rem;
+  }
+  
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .stepsSection {
+    padding: 4rem 1.5rem;
+  }
+  
+  .stepCard {
+    padding: 2rem 1.5rem;
+  }
+  
+  .stepHeader {
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .stepIcon {
+    width: 56px;
+    height: 56px;
+    font-size: 2rem;
+  }
+  
+  .stepTitle {
+    font-size: 1.5rem;
+  }
+  
+  .stepDescription {
+    font-size: 1rem;
+  }
+  
+  .connectorLine {
+    height: 50px;
+  }
+  
+  .ctaSection {
+    padding: 5rem 1.5rem;
+  }
+  
+  .ctaTitle {
+    font-size: 2.25rem;
+  }
+  
+  .ctaSubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .ctaButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .ctaButton,
+  .ctaSecondaryButton {
+    width: 100%;
+    max-width: 300px;
+    padding: 1rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    padding: 5rem 1rem 3rem;
+  }
+  
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  
+  .stepsSection {
+    padding: 3rem 1rem;
+  }
+  
+  .stepCard {
+    padding: 1.75rem 1.25rem;
+  }
+  
+  .stepNumber {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.75rem;
+    min-width: 50px;
+  }
+  
+  .stepIcon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.75rem;
+  }
+  
+  .stepTitle {
+    font-size: 1.35rem;
+  }
+  
+  .stepDescription {
+    font-size: 0.95rem;
+  }
+  
+  .ctaTitle {
+    font-size: 1.875rem;
+  }
+  
+  .ctaSubtitle {
+    font-size: 1rem;
+  }
+}
