@@ -62,3 +62,92 @@ html {
   background: linear-gradient(180deg, #9a3bf2, #5a10f0);
 }
 
+/* ReactFlow Dark Theme Styling */
+.react-flow {
+  background: transparent !important;
+}
+
+.react-flow__node {
+  background: rgba(20, 10, 40, 0.9) !important;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(138, 43, 226, 0.4) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  box-shadow: 
+    0 4px 16px rgba(138, 43, 226, 0.3),
+    0 0 0 1px rgba(138, 43, 226, 0.2) inset !important;
+  transition: all 0.3s ease !important;
+}
+
+.react-flow__node:hover {
+  border-color: rgba(138, 43, 226, 0.7) !important;
+  box-shadow: 
+    0 6px 24px rgba(138, 43, 226, 0.5),
+    0 0 0 1px rgba(138, 43, 226, 0.4) inset !important;
+  transform: translateY(-2px) !important;
+}
+
+.react-flow__node.selected {
+  border-color: #8a2be2 !important;
+  box-shadow: 
+    0 0 0 4px rgba(138, 43, 226, 0.3),
+    0 6px 24px rgba(138, 43, 226, 0.5) !important;
+}
+
+.react-flow__edge {
+  stroke: rgba(138, 43, 226, 0.6) !important;
+  stroke-width: 2 !important;
+}
+
+.react-flow__edge.selected {
+  stroke: #8a2be2 !important;
+  stroke-width: 3 !important;
+}
+
+.react-flow__edge-path {
+  stroke: rgba(138, 43, 226, 0.6) !important;
+}
+
+.react-flow__connection-line {
+  stroke: rgba(138, 43, 226, 0.8) !important;
+}
+
+.react-flow__controls {
+  background: rgba(20, 10, 40, 0.8) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(138, 43, 226, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.react-flow__controls-button {
+  background: rgba(138, 43, 226, 0.2) !important;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2) !important;
+  color: white !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(138, 43, 226, 0.4) !important;
+}
+
+.react-flow__controls-button svg {
+  fill: white !important;
+}
+
+.react-flow__minimap {
+  background: rgba(20, 10, 40, 0.8) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(138, 43, 226, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.react-flow__background {
+  background: transparent !important;
+}
+
+.react-flow__background-pattern {
+  stroke: rgba(138, 43, 226, 0.1) !important;
+}
+

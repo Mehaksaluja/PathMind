@@ -43,6 +43,12 @@ export function setAuthToken(token: string): void {
   }
 }
 
+export function setUser(user: User): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('user', JSON.stringify(user))
+  }
+}
+
 export function clearAuth(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('auth-token')

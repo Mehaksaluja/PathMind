@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import ReactFlow, {
   Node,
   Edge,
@@ -65,11 +65,20 @@ const initialEdges: Edge[] = [
 
 interface RoadmapFlowProps {
   onTopicSelect: (topicId: string | null) => void
+  roadmapData?: { nodes: any[]; edges: any[] } | null
 }
 
-export default function RoadmapFlow({ onTopicSelect }: RoadmapFlowProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowProps) {
+  const [nodes, setNodes, onNodesChange] = useNodesState(roadmapData?.nodes || initialNodes)
+  const [edges, setEdges, onEdgesChange] = useEdgesState(roadmapData?.edges || initialEdges)
+
+  // Update nodes and edges when roadmapData changes
+  useEffect(() => {
+    if (roadmapData) {
+      setNodes(roadmapData.nodes)
+      setEdges(roadmapData.edges)
+    }
+  }, [roadmapData, setNodes, setEdges])
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -84,7 +93,7 @@ export default function RoadmapFlow({ onTopicSelect }: RoadmapFlowProps) {
   )
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', height: '100%', flex: 1 }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
