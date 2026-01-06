@@ -8,13 +8,32 @@ import Sidebar from '@/components/dashboard/Sidebar'
 import { getCurrentUser, clearAuth } from '@/lib/auth'
 import styles from './dashboard.module.css'
 
+interface TopicData {
+  id: string
+  title: string
+  description: string
+  level: string
+  estimatedHours?: number
+  resources?: Array<{ title: string; url: string; type: string }>
+  children?: TopicData[]
+  nodeId?: string
+  parentId?: string | null
+  depth?: number
+}
+
 export default function Dashboard() {
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState<TopicData | null>(null)
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [user, setUser] = useState<{ name: string; email: string } | null>(null)
   const [showWelcome, setShowWelcome] = useState(true)
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [roadmapData, setRoadmapData] = useState<{ nodes: any[]; edges: any[] } | null>(null)
+  const [roadmapData, setRoadmapData] = useState<{
+    title?: string
+    description?: string
+    flowData?: { nodes: any[]; edges: any[] }
+    topicMap?: Record<string, TopicData>
+  } | null>(null)
   const router = useRouter()
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -116,20 +135,16 @@ export default function Dashboard() {
       const data = await response.json()
       
       if (response.ok && data.roadmap) {
+        console.log('Roadmap received:', data.roadmap)
         setRoadmapData(data.roadmap)
         setShowWelcome(false)
       } else {
-        // For now, generate mock roadmap based on prompt
-        // This will be replaced with actual AI-generated roadmap
-        const mockRoadmap = generateMockRoadmap(prompt)
-        setRoadmapData(mockRoadmap)
-        setShowWelcome(false)
+        console.error('Error response:', data)
+        alert(data.error || 'Failed to generate roadmap. Please try again.')
       }
     } catch (error) {
-      // Fallback to mock roadmap if API fails
-      const mockRoadmap = generateMockRoadmap(prompt)
-      setRoadmapData(mockRoadmap)
-      setShowWelcome(false)
+      console.error('Error generating roadmap:', error)
+      alert('Failed to connect to server. Please make sure the backend is running.')
     } finally {
       setIsGenerating(false)
     }
@@ -232,7 +247,7 @@ export default function Dashboard() {
           <div className={styles.welcomeBanner}>
             <div className={styles.welcomeContent}>
               <h2 className={styles.welcomeTitle}>
-                Welcome{user.name ? `, ${user.name}` : ''}! 🎉
+                Welcome{user.name ? `, ${user.name}` : ''}!
               </h2>
               <p className={styles.welcomeText}>
                 Enter your learning goal below to generate your personalized roadmap.
@@ -326,12 +341,15 @@ export default function Dashboard() {
             <>
               <div className={styles.roadmapContainer}>
                 <div className={styles.roadmapHeader}>
-                  <h3 className={styles.roadmapTitle}>Your Learning Roadmap</h3>
+                  <h3 className={styles.roadmapTitle}>
+                    {roadmapData?.title || 'Your Learning Roadmap'}
+                  </h3>
                   <button 
                     onClick={() => {
                       setRoadmapData(null)
                       setPrompt('')
                       setSelectedTopic(null)
+                      setSelectedNodeId(null)
                     }}
                     className={styles.newRoadmapButton}
                   >
@@ -339,16 +357,31 @@ export default function Dashboard() {
                   </button>
                 </div>
                 <RoadmapFlow 
-                  onTopicSelect={setSelectedTopic}
+                  onTopicSelect={(topicId, nodeId) => {
+                    if (nodeId && roadmapData?.topicMap) {
+                      const topic = roadmapData.topicMap[nodeId]
+                      setSelectedTopic(topic || null)
+                      setSelectedNodeId(nodeId)
+                    } else {
+                      setSelectedTopic(null)
+                      setSelectedNodeId(null)
+                    }
+                  }}
                   roadmapData={roadmapData}
                 />
               </div>
-              <Sidebar selectedTopic={selectedTopic} />
+              <Sidebar 
+                selectedTopic={selectedTopic}
+                selectedNodeId={selectedNodeId}
+                roadmapTitle={roadmapData?.title}
+                roadmapDescription={roadmapData?.description}
+                topicMap={roadmapData?.topicMap}
+              />
             </>
           ) : (
             <div className={styles.emptyState}>
               <div className={styles.emptyStateContent}>
-                <div className={styles.emptyStateIcon}>🗺️</div>
+                <div className={styles.emptyStateIcon}></div>
                 <h3 className={styles.emptyStateTitle}>No Roadmap Yet</h3>
                 <p className={styles.emptyStateText}>
                   Enter your learning goal above to generate your personalized roadmap

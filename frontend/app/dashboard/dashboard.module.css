@@ -286,6 +286,7 @@
 .main {
   display: flex;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
   position: relative;
   z-index: 5;
@@ -301,6 +302,8 @@
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 200px);
+  width: 100%;
+  overflow-y: auto;
 }
 
 .promptCard {
@@ -576,6 +579,8 @@
 
 .roadmapContainer {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
   background: rgba(20, 10, 40, 0.7);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(138, 43, 226, 0.25);
@@ -587,6 +592,13 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.roadmapContainer > div:last-child {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .roadmapHeader {

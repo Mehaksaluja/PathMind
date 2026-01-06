@@ -12,7 +12,7 @@ export default function CTA() {
         <div className={styles.ctaGradientOrb3}></div>
       </div>
       <div className={styles.ctaContent}>
-        <div className={styles.ctaIcon}>🚀</div>
+        <div className={styles.ctaIcon}></div>
         <h2 className={styles.ctaTitle}>
           Ready to Start Your Learning Journey?
         </h2>

@@ -1,0 +1,47 @@
+.customNode {
+  will-change: auto !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.customNode:hover {
+  transform: translateZ(0) scale(1.02);
+  transition: transform 0.15s ease-out;
+}
+
+/* Prevent React Flow from causing shaking */
+.react-flow__node {
+  transition: none !important;
+}
+
+.react-flow__node:hover {
+  transition: transform 0.15s ease-out !important;
+}
+
+.react-flow__handle {
+  transition: none !important;
+}
+
+/* Smooth edge animations */
+.react-flow__edge {
+  transition: opacity 0.2s ease;
+}
+
+.react-flow__edge-path {
+  transition: stroke 0.2s ease;
+}
+
+/* Better controls styling */
+.react-flow__controls {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.react-flow__controls-button {
+  transition: background-color 0.2s ease !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: rgba(138, 43, 226, 0.3) !important;
+}
+

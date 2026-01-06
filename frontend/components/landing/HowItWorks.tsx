@@ -10,31 +10,31 @@ const steps = [
     number: '01',
     title: 'Set Your Learning Goal',
     description: 'Tell PathMind what you want to achieve - whether it\'s getting a job, building a project, or mastering a skill. Our AI understands your objectives and creates a tailored learning path.',
-    icon: '🎯',
+    icon: '',
   },
   {
     number: '02',
     title: 'AI Generates Your Roadmap',
     description: 'Our advanced AI analyzes your goal and creates a personalized learning roadmap with topics organized by dependencies and logical progression.',
-    icon: '🤖',
+    icon: '',
   },
   {
     number: '03',
     title: 'Visualize Your Path',
     description: 'Explore your roadmap as an interactive flowchart. See how topics connect, which ones depend on others, and understand the learning sequence.',
-    icon: '🗺️',
+    icon: '',
   },
   {
     number: '04',
     title: 'Learn with Context',
     description: 'Click on any topic to access curated resources, documentation, and videos. Get AI-powered explanations about why each topic matters.',
-    icon: '💡',
+    icon: '',
   },
   {
     number: '05',
     title: 'Track Your Progress',
     description: 'Mark topics as complete, see your learning journey, and adjust your roadmap as you progress. Stay motivated with visual progress tracking.',
-    icon: '📊',
+    icon: '',
   }
 ]
 
