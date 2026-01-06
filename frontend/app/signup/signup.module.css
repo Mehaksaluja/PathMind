@@ -370,7 +370,6 @@
   transform: translateX(-5px);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .content {
     padding: 1.5rem;

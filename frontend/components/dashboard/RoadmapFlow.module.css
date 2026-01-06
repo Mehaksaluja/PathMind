@@ -10,7 +10,6 @@
   transition: transform 0.15s ease-out;
 }
 
-/* Prevent React Flow from causing shaking */
 .react-flow__node {
   transition: none !important;
 }
@@ -23,7 +22,6 @@
   transition: none !important;
 }
 
-/* Smooth edge animations */
 .react-flow__edge {
   transition: opacity 0.2s ease;
 }
@@ -32,7 +30,6 @@
   transition: stroke 0.2s ease;
 }
 
-/* Better controls styling */
 .react-flow__controls {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

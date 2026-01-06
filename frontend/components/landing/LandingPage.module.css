@@ -8,7 +8,6 @@
   width: 100%;
 }
 
-/* Ensure no horizontal scroll on mobile */
 @media (max-width: 768px) {
   .container {
     overflow-x: hidden;

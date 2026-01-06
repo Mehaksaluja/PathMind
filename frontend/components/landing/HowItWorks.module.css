@@ -5,7 +5,6 @@
   overflow-x: hidden;
 }
 
-/* Hero Section */
 .heroSection {
   padding: 8rem 2rem 6rem;
   text-align: center;
@@ -67,7 +66,6 @@
   margin: 0 auto;
 }
 
-/* Steps Section */
 .stepsSection {
   padding: 6rem 2rem;
   max-width: 1000px;
@@ -205,7 +203,6 @@
   box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
 }
 
-/* CTA Section */
 .ctaSection {
   padding: 6rem 2rem;
   background: linear-gradient(180deg, #1a0a2e 0%, #0a0a14 100%);
@@ -302,7 +299,6 @@
   transform: translateX(-5px);
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
   .heroTitle {
     font-size: 3rem;

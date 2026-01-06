@@ -235,7 +235,6 @@
   box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
 }
 
-/* Tablet */
 @media (max-width: 1024px) {
   .cta {
     padding: 8rem 2rem;
@@ -261,7 +260,6 @@
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   .cta {
     padding: 6rem 2rem;
@@ -333,7 +331,6 @@
   }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
   .cta {
     padding: 5rem 1.5rem;

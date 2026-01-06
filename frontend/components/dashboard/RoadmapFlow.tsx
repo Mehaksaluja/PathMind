@@ -18,7 +18,6 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import styles from './RoadmapFlow.module.css'
 
-// Custom node component - clean and stable
 const CustomNode = ({ data, selected }: { data: any; selected: boolean }) => {
   const levelColors: Record<string, string> = {
     beginner: '#10b981',
@@ -128,7 +127,6 @@ interface RoadmapFlowProps {
 export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowProps) {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
 
-  // Get all nodes and edges from roadmap data
   const allNodes = useMemo(() => {
     if (!roadmapData?.flowData?.nodes) return []
     return roadmapData.flowData.nodes
@@ -139,7 +137,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
     return roadmapData.flowData.edges
   }, [roadmapData])
 
-  // Initialize - expand first level by default
   useEffect(() => {
     if (allNodes.length > 0) {
       const rootNodes = allNodes.filter((node: any) => !node.data?.parentId)
@@ -147,14 +144,12 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
     }
   }, [allNodes.length])
 
-  // Filter visible nodes based on expanded state
   const visibleNodes = useMemo(() => {
     if (allNodes.length === 0) return []
     
     const visible = new Set<string>()
     const queue: string[] = []
     
-    // Start with root nodes (always visible)
     allNodes.forEach((node: any) => {
       if (!node.data?.parentId) {
         visible.add(node.id)
@@ -164,7 +159,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
       }
     })
 
-    // BFS to find all visible children
     while (queue.length > 0) {
       const parentId = queue.shift()!
       allNodes.forEach((node: any) => {
@@ -189,7 +183,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
       }))
   }, [allNodes, expandedNodes])
 
-  // Filter visible edges
   const visibleEdges = useMemo(() => {
     if (allEdges.length === 0) return []
     const visibleNodeIds = new Set(visibleNodes.map((n: any) => n.id))
@@ -215,7 +208,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
   const [nodes, setNodes, onNodesChange] = useNodesState(visibleNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(visibleEdges)
 
-  // Update nodes and edges when they change
   useEffect(() => {
     if (visibleNodes.length > 0) {
       setNodes(visibleNodes)
@@ -234,7 +226,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
       
       const topicData = roadmapData?.topicMap?.[node.id]
       
-      // Toggle expand/collapse
       if (topicData?.children && topicData.children.length > 0) {
         setExpandedNodes((prev) => {
           const newSet = new Set(prev)
@@ -247,7 +238,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
         })
       }
 
-      // Select topic for sidebar
       if (topicData) {
         onTopicSelect(topicData.id || null, node.id)
       } else {
@@ -262,7 +252,6 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
     [setEdges]
   )
 
-  // If no data, show empty state
   if (!roadmapData?.flowData || allNodes.length === 0) {
     return (
       <div style={{ 

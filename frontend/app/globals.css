@@ -22,7 +22,6 @@ body {
   color: #ffffff;
 }
 
-/* Responsive font sizing - keeping base size larger for mobile readability */
 @media (max-width: 768px) {
   html {
     font-size: 16px;
@@ -39,12 +38,10 @@ body {
   height: 100%;
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -62,7 +59,6 @@ html {
   background: linear-gradient(180deg, #9a3bf2, #5a10f0);
 }
 
-/* ReactFlow Dark Theme Styling */
 .react-flow {
   background: transparent !important;
 }

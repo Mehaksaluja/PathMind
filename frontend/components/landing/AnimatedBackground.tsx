@@ -19,7 +19,6 @@ export default function AnimatedBackground() {
     const stars: Array<{ x: number; y: number; radius: number; vx: number; vy: number; brightness: number }> = []
     const particles: Array<{ x: number; y: number; radius: number; vx: number; vy: number; life: number; maxLife: number }> = []
 
-    // Create stars
     for (let i = 0; i < 100; i++) {
       stars.push({
         x: Math.random() * canvas.width,
@@ -31,7 +30,6 @@ export default function AnimatedBackground() {
       })
     }
 
-    // Create floating particles
     for (let i = 0; i < 30; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -52,7 +50,6 @@ export default function AnimatedBackground() {
       ctx.fillStyle = 'rgba(10, 10, 20, 0.1)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      // Draw and update stars
       stars.forEach(star => {
         star.x += star.vx
         star.y += star.vy
@@ -70,7 +67,6 @@ export default function AnimatedBackground() {
         ctx.fill()
       })
 
-      // Draw and update particles
       particles.forEach(particle => {
         particle.x += particle.vx
         particle.y += particle.vy

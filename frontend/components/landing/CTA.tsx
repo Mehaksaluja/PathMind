@@ -31,15 +31,15 @@ export default function CTA() {
         </div>
         <div className={styles.ctaFeatures}>
           <div className={styles.ctaFeature}>
-            <span className={styles.ctaFeatureIcon}>✓</span>
+            <span className={styles.ctaFeatureIcon}></span>
             <span>No credit card required</span>
           </div>
           <div className={styles.ctaFeature}>
-            <span className={styles.ctaFeatureIcon}>✓</span>
+            <span className={styles.ctaFeatureIcon}></span>
             <span>Free forever plan</span>
           </div>
           <div className={styles.ctaFeature}>
-            <span className={styles.ctaFeatureIcon}>✓</span>
+            <span className={styles.ctaFeatureIcon}></span>
             <span>Start in seconds</span>
           </div>
         </div>

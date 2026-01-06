@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import { generateRoadmap } from './services/roadmapService.js'
 import { getChatbotResponse } from './services/chatbotService.js'
 import { connectDatabase } from './config/database.js'
+import { registerUser, loginUser } from './services/authService.js'
+import { authenticateToken } from './middleware/auth.js'
 
 dotenv.config()
 
@@ -17,15 +19,58 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'PathMind API is running' })
 })
 
-app.post('/api/auth/login', (req, res) => {
-  res.json({ message: 'Login endpoint - to be implemented' })
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { name, email, password } = req.body
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email, and password are required' })
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' })
+    }
+
+    const result = await registerUser(name, email, password)
+    res.status(201).json(result)
+  } catch (error) {
+    console.error('Error during signup:', error)
+    res.status(400).json({ error: error.message || 'Signup failed' })
+  }
 })
 
-app.post('/api/auth/signup', (req, res) => {
-  res.json({ message: 'Signup endpoint - to be implemented' })
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' })
+    }
+
+    const result = await loginUser(email, password)
+    res.json(result)
+  } catch (error) {
+    console.error('Error during login:', error)
+    res.status(401).json({ error: error.message || 'Login failed' })
+  }
 })
 
-app.post('/api/roadmaps/generate', async (req, res) => {
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+  try {
+    res.json({
+      user: {
+        id: req.user._id.toString(),
+        name: req.user.name,
+        email: req.user.email,
+      },
+    })
+  } catch (error) {
+    console.error('Error getting user:', error)
+    res.status(500).json({ error: 'Failed to get user information' })
+  }
+})
+
+app.post('/api/roadmaps/generate', authenticateToken, async (req, res) => {
   try {
     const { prompt } = req.body
 
@@ -52,7 +97,7 @@ app.get('/api/roadmaps/:id', (req, res) => {
   res.json({ message: 'Get roadmap endpoint - to be implemented' })
 })
 
-app.post('/api/chatbot/ask', async (req, res) => {
+app.post('/api/chatbot/ask', authenticateToken, async (req, res) => {
   try {
     const { question, context } = req.body
 

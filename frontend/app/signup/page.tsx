@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
-import { setAuthToken, setUser, type User } from '@/lib/auth'
+import { setAuthToken, setUser } from '@/lib/auth'
 import styles from './signup.module.css'
 
 export default function SignupPage() {
@@ -88,7 +88,6 @@ export default function SignupPage() {
     const password = formData.get('password') as string
     const confirmPassword = formData.get('confirmPassword') as string
 
-    // Validate passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match')
       setIsLoading(false)
@@ -106,37 +105,17 @@ export default function SignupPage() {
 
       const data = await response.json()
 
-      if (response.ok) {
-        // Store auth token and user data
-        const token = data.token || 'mock-token-' + Date.now()
-        const user: User = data.user || {
-          id: 'user-' + Date.now(),
-          email: email,
-          name: name,
-        }
-
-        setAuthToken(token)
-        setUser(user)
-
-        // Redirect to dashboard
+      if (response.ok && data.token && data.user) {
+        setAuthToken(data.token)
+        setUser(data.user)
         router.push('/dashboard')
       } else {
-        setError(data.message || 'Sign up failed. Please try again.')
+        setError(data.error || data.message || 'Sign up failed. Please try again.')
         setIsLoading(false)
       }
     } catch (err) {
-      // For now, allow signup even if backend is not fully implemented
-      // This allows the UI to work while backend is being developed
-      const token = 'mock-token-' + Date.now()
-      const user: User = {
-        id: 'user-' + Date.now(),
-        email: email,
-        name: name,
-      }
-
-      setAuthToken(token)
-      setUser(user)
-      router.push('/dashboard')
+      setError('Failed to connect to server. Please try again.')
+      setIsLoading(false)
     }
   }
 

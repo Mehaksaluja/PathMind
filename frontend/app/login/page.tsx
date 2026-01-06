@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
-import { setAuthToken, setUser, type User } from '@/lib/auth'
+import { setAuthToken, setUser } from '@/lib/auth'
 import styles from './login.module.css'
 
 export default function LoginPage() {
@@ -97,37 +97,17 @@ export default function LoginPage() {
 
       const data = await response.json()
 
-      if (response.ok) {
-        // Store auth token and user data
-        const token = data.token || 'mock-token-' + Date.now()
-        const user: User = data.user || {
-          id: 'user-' + Date.now(),
-          email: email,
-          name: email.split('@')[0],
-        }
-
-        setAuthToken(token)
-        setUser(user)
-
-        // Redirect to dashboard
+      if (response.ok && data.token && data.user) {
+        setAuthToken(data.token)
+        setUser(data.user)
         router.push('/dashboard')
       } else {
-        setError(data.message || 'Login failed. Please try again.')
+        setError(data.error || data.message || 'Login failed. Please try again.')
         setIsLoading(false)
       }
     } catch (err) {
-      // For now, allow login even if backend is not fully implemented
-      // This allows the UI to work while backend is being developed
-      const token = 'mock-token-' + Date.now()
-      const user: User = {
-        id: 'user-' + Date.now(),
-        email: email,
-        name: email.split('@')[0],
-      }
-
-      setAuthToken(token)
-      setUser(user)
-      router.push('/dashboard')
+      setError('Failed to connect to server. Please try again.')
+      setIsLoading(false)
     }
   }
 

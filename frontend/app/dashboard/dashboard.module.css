@@ -653,7 +653,6 @@
   z-index: 1;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .headerContent {
     flex-direction: column;

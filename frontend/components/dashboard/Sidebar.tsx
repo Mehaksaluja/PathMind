@@ -49,13 +49,11 @@ export default function Sidebar({
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [chatMessages])
 
-  // Get parent topic if exists
   const getParentTopic = () => {
     if (!selectedTopic?.parentId || !topicMap) return null
     return Object.values(topicMap).find(t => t.nodeId === selectedTopic.parentId) || null
   }
 
-  // Get sibling topics
   const getSiblingTopics = () => {
     if (!selectedTopic?.parentId || !topicMap) return []
     const parent = Object.values(topicMap).find(t => t.nodeId === selectedTopic.parentId)
@@ -76,7 +74,6 @@ export default function Sidebar({
       const parentTopic = getParentTopic()
       const siblings = getSiblingTopics()
       
-      // Build roadmap structure overview
       let roadmapStructure = ''
       if (topicMap && selectedTopic) {
         const buildPath = (topic: TopicData, path: string[] = []): string[] => {
@@ -93,10 +90,24 @@ export default function Sidebar({
         roadmapStructure = `Learning Path: ${path.join(' → ')}`
       }
 
+      const token = localStorage.getItem('auth-token')
+      if (!token) {
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: 'You must be logged in to use the chatbot.',
+          },
+        ])
+        setIsLoadingChat(false)
+        return
+      }
+
       const response = await fetch('http://localhost:5000/api/chatbot/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           question: userMessage,
@@ -229,8 +240,6 @@ export default function Sidebar({
                       onClick={() => {
                         const parent = getParentTopic()
                         if (parent?.nodeId && topicMap) {
-                          // This would need to be handled by parent component
-                          // For now, just show the parent info
                         }
                       }}
                     >

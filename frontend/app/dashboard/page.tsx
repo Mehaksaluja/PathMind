@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import RoadmapFlow from '@/components/dashboard/RoadmapFlow'
 import Sidebar from '@/components/dashboard/Sidebar'
-import { getCurrentUser, clearAuth } from '@/lib/auth'
+import { getCurrentUser, clearAuth, getAuthToken } from '@/lib/auth'
 import styles from './dashboard.module.css'
 
 interface TopicData {
@@ -41,7 +41,6 @@ export default function Dashboard() {
     const currentUser = getCurrentUser()
     if (currentUser) {
       setUser(currentUser)
-      // Hide welcome message after 5 seconds
       const timer = setTimeout(() => {
         setShowWelcome(false)
       }, 5000)
@@ -124,22 +123,36 @@ export default function Dashboard() {
 
     setIsGenerating(true)
     try {
+      const token = getAuthToken()
+      if (!token) {
+        alert('You must be logged in to generate roadmaps')
+        router.push('/login')
+        setIsGenerating(false)
+        return
+      }
+
       const response = await fetch('http://localhost:5000/api/roadmaps/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ prompt }),
       })
 
       const data = await response.json()
       
+      if (response.status === 401) {
+        clearAuth()
+        router.push('/login')
+        setIsGenerating(false)
+        return
+      }
+      
       if (response.ok && data.roadmap) {
-        console.log('Roadmap received:', data.roadmap)
         setRoadmapData(data.roadmap)
         setShowWelcome(false)
       } else {
-        console.error('Error response:', data)
         alert(data.error || 'Failed to generate roadmap. Please try again.')
       }
     } catch (error) {
@@ -151,7 +164,6 @@ export default function Dashboard() {
   }
 
   const generateMockRoadmap = (userPrompt: string) => {
-    // This is a placeholder - will be replaced with actual AI generation
     const keywords = userPrompt.toLowerCase()
     let nodes: any[] = []
     let edges: any[] = []
@@ -189,7 +201,6 @@ export default function Dashboard() {
         { id: 'e3-6', source: '3', target: '6' },
       ]
     } else {
-      // Generic roadmap
       nodes = [
         { id: '1', data: { label: 'Foundation Concepts' }, position: { x: 250, y: 50 } },
         { id: '2', data: { label: 'Core Skills' }, position: { x: 250, y: 150 } },

@@ -1,11 +1,3 @@
-/**
- * Authentication utility functions
- * This file will handle authentication state and checks
- */
-
-// For now, this is a placeholder
-// In the future, implement actual authentication logic here
-
 export interface User {
   id: string
   email: string
@@ -13,17 +5,22 @@ export interface User {
 }
 
 export function isAuthenticated(): boolean {
-  // TODO: Check if user is authenticated
-  // This should check cookies, localStorage, or session
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('auth-token')
-    return !!token
+    if (!token) return false
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      const expiry = payload.exp * 1000
+      return Date.now() < expiry
+    } catch {
+      return false
+    }
   }
   return false
 }
 
 export function getCurrentUser(): User | null {
-  // TODO: Get current user from token/session
   if (typeof window !== 'undefined') {
     const userStr = localStorage.getItem('user')
     if (userStr) {
@@ -33,6 +30,13 @@ export function getCurrentUser(): User | null {
         return null
       }
     }
+  }
+  return null
+}
+
+export function getAuthToken(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('auth-token')
   }
   return null
 }
@@ -56,16 +60,37 @@ export function clearAuth(): void {
   }
 }
 
-// Route access configuration
+export async function verifyToken(): Promise<User | null> {
+  const token = getAuthToken()
+  if (!token) return null
+
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/me', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      setUser(data.user)
+      return data.user
+    } else {
+      clearAuth()
+      return null
+    }
+  } catch {
+    return null
+  }
+}
+
 export const ROUTE_ACCESS = {
-  // Public routes - accessible without authentication
   PUBLIC: [
     '/',
     '/login',
     '/signup',
     '/how-it-works',
   ],
-  // Protected routes - require authentication
   PROTECTED: [
     '/dashboard',
   ],
