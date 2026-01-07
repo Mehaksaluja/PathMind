@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+import Groq from 'groq-sdk'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -10,10 +10,17 @@ if (!apiKey || apiKey.trim() === '' || apiKey === 'your_groq_api_key_here') {
   console.error('Get your API key from: https://console.groq.com/keys')
 }
 
-const client = new OpenAI({
-  apiKey: apiKey || '',
-  baseURL: 'https://api.groq.com/openai/v1',
-})
+let client = null
+try {
+  if (apiKey && apiKey.trim() !== '' && apiKey !== 'your_groq_api_key_here') {
+    client = new Groq({
+      apiKey: apiKey,
+    })
+    console.log('Groq AI Adapter initialized with llama-3.3-70b-versatile')
+  }
+} catch (error) {
+  console.error(`Error configuring Groq: ${error.message}`)
+}
 
 export async function generateRoadmap(prompt) {
   try {
@@ -113,12 +120,12 @@ Return ONLY valid JSON in this exact format:
 
 IMPORTANT: Ensure the JSON is valid and the structure goes at least 4 levels deep. Each level should have meaningful children.`
 
-    if (!apiKey || apiKey.trim() === '' || apiKey === 'your_groq_api_key_here') {
+    if (!client) {
       throw new Error('Groq API key is not configured. Please set GROQ_API_KEY in your .env file.')
     }
 
-    const completion = await client.chat.completions.create({
-      model: 'llama-3.1-70b-versatile',
+    const chatCompletion = await client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
       messages: [
         {
           role: 'system',
@@ -134,7 +141,7 @@ IMPORTANT: Ensure the JSON is valid and the structure goes at least 4 levels dee
       max_tokens: 4000,
     })
 
-    const text = completion.choices[0]?.message?.content || ''
+    const text = chatCompletion.choices[0]?.message?.content?.trim() || ''
     
     if (!text) {
       throw new Error('No response received from Groq API')
@@ -150,7 +157,7 @@ IMPORTANT: Ensure the JSON is valid and the structure goes at least 4 levels dee
       topicMap,
     }
   } catch (error) {
-    console.error('Error generating roadmap:', error)
+    console.error(`Error generating text with Groq: ${error.message}`)
     throw new Error(`Failed to generate roadmap: ${error.message}`)
   }
 }
@@ -160,11 +167,54 @@ function convertToFlowStructure(roadmapData) {
   const edges = []
   const topicMap = {}
   let nodeIdCounter = 1
-  const levelPositions = {}
-  const levelCounts = {}
+  
+  // Better layout configuration
+  const VERTICAL_SPACING = 200  // Space between levels (top to bottom)
+  const HORIZONTAL_SPACING = 280  // Space between siblings
+  const START_Y = 100  // Starting Y position for root nodes
+  const START_X = 400  // Starting X position for root nodes
 
-  function processTopic(topic, parentId = null, level = 0, siblingIndex = 0, totalSiblings = 1) {
+  // Track positions for each level
+  const levelYPositions = {}
+  const levelXCounters = {}
+
+  function calculateNodePosition(level, siblingIndex, totalSiblings, parentX = null) {
+    // Calculate Y position based on level (top to bottom flow)
+    if (!levelYPositions[level]) {
+      levelYPositions[level] = START_Y + (level * VERTICAL_SPACING)
+      levelXCounters[level] = 0
+    }
+
+    const y = levelYPositions[level]
+
+    // Calculate X position
+    let x
+    if (level === 0) {
+      // Root nodes: distribute evenly
+      const totalWidth = (totalSiblings - 1) * HORIZONTAL_SPACING
+      const startX = START_X - (totalWidth / 2)
+      x = startX + (siblingIndex * HORIZONTAL_SPACING)
+    } else if (parentX !== null) {
+      // Child nodes: center them under parent
+      const childrenWidth = (totalSiblings - 1) * HORIZONTAL_SPACING
+      const startX = parentX - (childrenWidth / 2)
+      x = startX + (siblingIndex * HORIZONTAL_SPACING)
+    } else {
+      // Fallback
+      x = START_X + (levelXCounters[level] * HORIZONTAL_SPACING)
+      levelXCounters[level]++
+    }
+
+    return { x, y }
+  }
+
+  function processTopic(topic, parentId = null, level = 0, siblingIndex = 0, totalSiblings = 1, parentX = null) {
     const nodeId = `node-${nodeIdCounter++}`
+    
+    const childCount = topic.children ? topic.children.length : 0
+    
+    // Calculate position for this node
+    const position = calculateNodePosition(level, siblingIndex, totalSiblings, parentX)
     
     topicMap[nodeId] = {
       ...topic,
@@ -172,21 +222,6 @@ function convertToFlowStructure(roadmapData) {
       parentId,
       level,
     }
-
-    if (!levelPositions[level]) {
-      levelPositions[level] = { y: 100 + level * 200, count: 0 }
-      levelCounts[level] = 0
-    }
-    
-    const horizontalSpacing = 300
-    const x = 250 + level * horizontalSpacing
-    
-    const verticalSpacing = 180
-    const y = levelPositions[level].y + (levelCounts[level] * verticalSpacing)
-    
-    levelCounts[level]++
-
-    const childCount = topic.children ? topic.children.length : 0
 
     nodes.push({
       id: nodeId,
@@ -200,9 +235,10 @@ function convertToFlowStructure(roadmapData) {
         estimatedHours: topic.estimatedHours,
         parentId: parentId,
       },
-      position: { x, y },
+      position: position,
     })
 
+    // Create edge from parent to this node
     if (parentId) {
       edges.push({
         id: `edge-${parentId}-${nodeId}`,
@@ -214,18 +250,20 @@ function convertToFlowStructure(roadmapData) {
       })
     }
 
+    // Process children
     if (topic.children && topic.children.length > 0) {
       const childrenCount = topic.children.length
       topic.children.forEach((child, index) => {
-        processTopic(child, nodeId, level + 1, index, childrenCount)
+        processTopic(child, nodeId, level + 1, index, childrenCount, position.x)
       })
     }
 
     return nodeId
   }
 
+  // Process all root topics
   roadmapData.topics.forEach((topic, index) => {
-    processTopic(topic, null, 0, index, roadmapData.topics.length)
+    processTopic(topic, null, 0, index, roadmapData.topics.length, null)
   })
 
   return { nodes, edges, topicMap }

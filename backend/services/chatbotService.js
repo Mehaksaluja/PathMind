@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+import Groq from 'groq-sdk'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -10,10 +10,17 @@ if (!apiKey || apiKey.trim() === '' || apiKey === 'your_groq_api_key_here') {
   console.error('Get your API key from: https://console.groq.com/keys')
 }
 
-const client = new OpenAI({
-  apiKey: apiKey || '',
-  baseURL: 'https://api.groq.com/openai/v1',
-})
+let client = null
+try {
+  if (apiKey && apiKey.trim() !== '' && apiKey !== 'your_groq_api_key_here') {
+    client = new Groq({
+      apiKey: apiKey,
+    })
+    console.log('Groq AI Chatbot initialized with llama-3.3-70b-versatile')
+  }
+} catch (error) {
+  console.error(`Error configuring Groq: ${error.message}`)
+}
 
 export async function getChatbotResponse(question, context = {}) {
   try {
@@ -45,12 +52,12 @@ When answering:
 - Encourage the user and acknowledge their progress
 - If asked about something not in context, provide general guidance but note that you're working with limited context`
 
-    if (!apiKey || apiKey.trim() === '' || apiKey === 'your_groq_api_key_here') {
+    if (!client) {
       throw new Error('Groq API key is not configured. Please set GROQ_API_KEY in your .env file.')
     }
 
-    const completion = await client.chat.completions.create({
-      model: 'llama-3.1-70b-versatile',
+    const chatCompletion = await client.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
       messages: [
         {
           role: 'system',
@@ -65,7 +72,7 @@ When answering:
       max_tokens: 800,
     })
 
-    const text = completion.choices[0]?.message?.content || ''
+    const text = chatCompletion.choices[0]?.message?.content?.trim() || ''
     
     if (!text) {
       throw new Error('No response received from Groq API')
@@ -73,7 +80,7 @@ When answering:
 
     return text
   } catch (error) {
-    console.error('Error generating chatbot response:', error)
+    console.error(`Error generating text with Groq: ${error.message}`)
     throw new Error(`Failed to generate response: ${error.message}`)
   }
 }

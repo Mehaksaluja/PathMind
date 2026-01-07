@@ -39,12 +39,14 @@ const CustomNode = ({ data, selected }: { data: any; selected: boolean }) => {
         padding: '12px 16px',
         minWidth: '160px',
         maxWidth: '220px',
+        width: '180px',
         boxShadow: selected
           ? '0 4px 16px rgba(138, 43, 226, 0.4)'
           : '0 2px 8px rgba(0, 0, 0, 0.3)',
         cursor: 'pointer',
         position: 'relative',
         userSelect: 'none',
+        transform: 'none',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: levelColor, width: '6px', height: '6px' }} />
@@ -282,13 +284,15 @@ export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowP
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         fitView
-        fitViewOptions={{ padding: 0.2, maxZoom: 1.2 }}
+        fitViewOptions={{ padding: 0.3, maxZoom: 1.2, includeHiddenNodes: false }}
         defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
         minZoom={0.3}
         maxZoom={1.5}
         nodesDraggable={true}
         nodesConnectable={false}
         elementsSelectable={true}
+        proOptions={{ hideAttribution: true }}
+        nodeOrigin={[0.5, 0.5]}
       >
         <Background 
           color="rgba(138, 43, 226, 0.1)"

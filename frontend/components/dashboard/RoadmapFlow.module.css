@@ -1,21 +1,39 @@
 .customNode {
-  will-change: auto !important;
-  transform: translateZ(0);
+  will-change: box-shadow, border-color !important;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out !important;
 }
 
 .customNode:hover {
-  transform: translateZ(0) scale(1.02);
-  transition: transform 0.15s ease-out;
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.5) !important;
+  border-color: rgba(138, 43, 226, 0.8) !important;
 }
 
 .react-flow__node {
   transition: none !important;
+  pointer-events: auto !important;
+  position: absolute !important;
 }
 
 .react-flow__node:hover {
-  transition: transform 0.15s ease-out !important;
+  transition: none !important;
+  transform: none !important;
+  position: absolute !important;
+}
+
+.react-flow__node.selected {
+  transition: none !important;
+  transform: none !important;
+  position: absolute !important;
+}
+
+.react-flow__node-draggable {
+  cursor: grab !important;
+}
+
+.react-flow__node-draggable:active {
+  cursor: grabbing !important;
 }
 
 .react-flow__handle {
