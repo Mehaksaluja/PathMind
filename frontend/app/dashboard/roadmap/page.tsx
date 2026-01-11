@@ -4,8 +4,21 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import RoadmapFlow from '@/components/dashboard/RoadmapFlow'
+import Sidebar from '@/components/dashboard/Sidebar'
 import { getAuthToken, getCurrentUser, clearAuth } from '@/lib/auth'
 import styles from './roadmap.module.css'
+
+interface TopicData {
+  id: string
+  title: string
+  description: string
+  level: string
+  estimatedHours?: number
+  resources?: Array<{ title: string; url: string; type: string }>
+  children?: TopicData[]
+  nodeId?: string
+  parentId?: string | null
+}
 
 export default function RoadmapPage() {
   const router = useRouter()
@@ -13,6 +26,8 @@ export default function RoadmapPage() {
   const [roadmapData, setRoadmapData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<{ name: string; email: string } | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState<TopicData | null>(null)
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -104,11 +119,50 @@ export default function RoadmapPage() {
         </header>
 
         <main className={styles.main}>
-          <RoadmapFlow 
-            onTopicSelect={(topicId, nodeId) => {
-              // Handle topic selection if needed
-            }}
-            roadmapData={roadmapData}
+          <div className={styles.roadmapWrapper}>
+            <RoadmapFlow 
+              onTopicSelect={(topicId, nodeId) => {
+                // Find topic from roadmapData recursively
+                const findTopic = (topics: TopicData[], targetId: string): TopicData | null => {
+                  if (!topics) return null
+                  
+                  for (const topic of topics) {
+                    if (topic.id === targetId) {
+                      return topic
+                    }
+                    if (topic.children && topic.children.length > 0) {
+                      const found = findTopic(topic.children, targetId)
+                      if (found) return found
+                    }
+                  }
+                  return null
+                }
+
+                if (roadmapData?.topics && topicId) {
+                  const topic = findTopic(roadmapData.topics, topicId)
+                  if (topic) {
+                    // Add nodeId to topic for sidebar compatibility
+                    const topicWithNodeId = { ...topic, nodeId: nodeId || topicId }
+                    setSelectedTopic(topicWithNodeId)
+                    setSelectedNodeId(nodeId || topicId)
+                  } else {
+                    setSelectedTopic(null)
+                    setSelectedNodeId(null)
+                  }
+                } else {
+                  setSelectedTopic(null)
+                  setSelectedNodeId(null)
+                }
+              }}
+              roadmapData={roadmapData}
+            />
+          </div>
+          <Sidebar 
+            selectedTopic={selectedTopic}
+            selectedNodeId={selectedNodeId}
+            roadmapTitle={roadmapData?.title}
+            roadmapDescription={roadmapData?.description}
+            topicMap={roadmapData?.topicMap}
           />
         </main>
       </div>

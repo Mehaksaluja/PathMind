@@ -150,8 +150,17 @@
   padding: 0;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: calc(100vh - 120px);
+  gap: 1rem;
+}
+
+.roadmapWrapper {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .loading {
@@ -229,6 +238,11 @@
   }
 
   .main {
+    flex-direction: column;
     padding: 1rem;
+  }
+
+  .roadmapWrapper {
+    min-height: 400px;
   }
 }
