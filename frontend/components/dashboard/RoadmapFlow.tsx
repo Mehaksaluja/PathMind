@@ -1,335 +1,206 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import ReactFlow, {
-  Node,
-  Edge,
-  Background,
-  Controls,
-  MiniMap,
-  Connection,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  Handle,
-  Position,
-  MarkerType,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+import { useState, useCallback, Dispatch, SetStateAction } from 'react'
 import styles from './RoadmapFlow.module.css'
 
-const CustomNode = ({ data, selected }: { data: any; selected: boolean }) => {
+interface TopicData {
+  id: string
+  title: string
+  description: string
+  level: string
+  estimatedHours?: number
+  resources?: Array<{ title: string; url: string; type: string }>
+  children?: TopicData[]
+}
+
+interface RoadmapFlowProps {
+  onTopicSelect: (topicId: string | null, nodeId: string | null) => void
+  roadmapData?: {
+    title?: string
+    description?: string
+    topics?: TopicData[]
+    topicMap?: Record<string, any>
+    flowData?: { nodes: any[]; edges: any[] }
+  } | null
+}
+
+const TopicCard = ({
+  topic,
+  level = 0,
+  isExpanded,
+  onToggle,
+  onSelect,
+  selectedTopicId,
+  expandedTopics,
+  setExpandedTopics,
+}: {
+  topic: TopicData
+  level: number
+  isExpanded: boolean
+  onToggle: () => void
+  onSelect: () => void
+  selectedTopicId: string | null
+  expandedTopics: Set<string>
+  setExpandedTopics: Dispatch<SetStateAction<Set<string>>>
+}) => {
   const levelColors: Record<string, string> = {
     beginner: '#10b981',
     intermediate: '#3b82f6',
     advanced: '#8b5cf6',
   }
 
-  const levelColor = levelColors[data.level] || '#6b7280'
+  const levelColor = levelColors[topic.level] || '#6b7280'
+  const hasChildren = topic.children && topic.children.length > 0
+  const isSelected = selectedTopicId === topic.id
 
   return (
-    <div
-      className={styles.customNode}
-      style={{
-        background: selected
-          ? 'rgba(138, 43, 226, 0.25)'
-          : 'rgba(20, 10, 40, 0.98)',
-        border: `2px solid ${selected ? '#8a2be2' : levelColor}`,
-        borderRadius: '10px',
-        padding: '12px 16px',
-        minWidth: '160px',
-        maxWidth: '220px',
-        width: '180px',
-        boxShadow: selected
-          ? '0 4px 16px rgba(138, 43, 226, 0.4)'
-          : '0 2px 8px rgba(0, 0, 0, 0.3)',
-        cursor: 'pointer',
-        position: 'relative',
-        userSelect: 'none',
-        transform: 'none',
-      }}
-    >
-      <Handle type="target" position={Position.Top} style={{ background: levelColor, width: '6px', height: '6px' }} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-          <span
-            style={{
-              fontSize: '14px',
-              fontWeight: 600,
-              color: '#ffffff',
-              lineHeight: '1.3',
-              flex: 1,
-            }}
-          >
-            {data.label}
-          </span>
-          {data.hasChildren && (
-            <span style={{ fontSize: '12px', color: levelColor }}>
-              {data.isExpanded ? '▼' : '▶'}
-            </span>
-          )}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-          {data.level && (
-            <span
-              style={{
-                padding: '3px 8px',
-                borderRadius: '4px',
-                fontSize: '9px',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                background: `${levelColor}20`,
-                color: levelColor,
-                border: `1px solid ${levelColor}40`,
-              }}
-            >
-              {data.level}
-            </span>
-          )}
-          {data.estimatedHours && (
-            <span
-              style={{
-                fontSize: '9px',
-                color: 'rgba(255, 255, 255, 0.6)',
-              }}
-            >
-              {data.estimatedHours}h
-            </span>
-          )}
-        </div>
-        {data.hasChildren && !data.isExpanded && (
-          <div
-            style={{
-              fontSize: '10px',
-              color: 'rgba(138, 43, 226, 0.7)',
-              fontWeight: 500,
-            }}
-          >
-            {data.childCount || 0} subtopics
+    <div className={styles.topicCard}>
+      <div
+        className={`${styles.topicHeader} ${isSelected ? styles.selected : ''}`}
+        style={{
+          borderLeft: `4px solid ${levelColor}`,
+          marginLeft: level > 0 ? `${level * 24}px` : '0',
+        }}
+        onClick={() => {
+          onSelect()
+          if (hasChildren) {
+            onToggle()
+          }
+        }}
+      >
+        <div className={styles.topicHeaderContent}>
+          <div className={styles.topicTitleRow}>
+            <h4 className={styles.topicTitle}>{topic.title}</h4>
+            {hasChildren && (
+              <button
+                className={styles.expandButton}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onToggle()
+                }}
+                aria-label={isExpanded ? 'Collapse' : 'Expand'}
+              >
+                {isExpanded ? '▼' : '▶'}
+              </button>
+            )}
           </div>
-        )}
+          <div className={styles.topicMeta}>
+            <span
+              className={styles.levelBadge}
+              style={{
+                backgroundColor: `${levelColor}20`,
+                color: levelColor,
+                borderColor: `${levelColor}40`,
+              }}
+            >
+              {topic.level}
+            </span>
+            {topic.estimatedHours && (
+              <span className={styles.hoursBadge}>{topic.estimatedHours}h</span>
+            )}
+            {hasChildren && (
+              <span className={styles.childrenCount}>
+                {topic.children?.length} subtopics
+              </span>
+            )}
+          </div>
+        </div>
       </div>
-      <Handle type="source" position={Position.Bottom} style={{ background: levelColor, width: '6px', height: '6px' }} />
+
+      {hasChildren && isExpanded && (
+        <div className={styles.topicChildren}>
+          {topic.children?.map((child) => (
+            <TopicCard
+              key={child.id}
+              topic={child}
+              level={level + 1}
+              isExpanded={expandedTopics.has(child.id)}
+              onToggle={() => {
+                setExpandedTopics((prev) => {
+                  const newSet = new Set(prev)
+                  if (newSet.has(child.id)) {
+                    newSet.delete(child.id)
+                  } else {
+                    newSet.add(child.id)
+                  }
+                  return newSet
+                })
+              }}
+              onSelect={onSelect}
+              selectedTopicId={selectedTopicId}
+              expandedTopics={expandedTopics}
+              setExpandedTopics={setExpandedTopics}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
-const nodeTypes = {
-  default: CustomNode,
-}
-
-interface RoadmapFlowProps {
-  onTopicSelect: (topicId: string | null, nodeId: string | null) => void
-  roadmapData?: {
-    flowData?: { nodes: any[]; edges: any[] }
-    topicMap?: Record<string, any>
-  } | null
-}
-
 export default function RoadmapFlow({ onTopicSelect, roadmapData }: RoadmapFlowProps) {
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
+  // Initialize: expand root topics by default
+  const rootTopicIds = roadmapData?.topics?.map((t) => t.id) || []
+  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(
+    new Set(rootTopicIds)
+  )
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null)
 
-  const allNodes = useMemo(() => {
-    if (!roadmapData?.flowData?.nodes) return []
-    return roadmapData.flowData.nodes
-  }, [roadmapData])
-
-  const allEdges = useMemo(() => {
-    if (!roadmapData?.flowData?.edges) return []
-    return roadmapData.flowData.edges
-  }, [roadmapData])
-
-  useEffect(() => {
-    if (allNodes.length > 0) {
-      const rootNodes = allNodes.filter((node: any) => !node.data?.parentId)
-      setExpandedNodes(new Set(rootNodes.map((n: any) => n.id)))
-    }
-  }, [allNodes.length])
-
-  const visibleNodes = useMemo(() => {
-    if (allNodes.length === 0) return []
-    
-    const visible = new Set<string>()
-    const queue: string[] = []
-    
-    allNodes.forEach((node: any) => {
-      if (!node.data?.parentId) {
-        visible.add(node.id)
-        if (expandedNodes.has(node.id)) {
-          queue.push(node.id)
-        }
-      }
-    })
-
-    while (queue.length > 0) {
-      const parentId = queue.shift()!
-      allNodes.forEach((node: any) => {
-        if (node.data?.parentId === parentId) {
-          visible.add(node.id)
-          if (expandedNodes.has(node.id)) {
-            queue.push(node.id)
-          }
-        }
-      })
-    }
-
-    return allNodes
-      .filter((node: any) => visible.has(node.id))
-      .map((node: any) => ({
-        ...node,
-        type: 'default',
-        data: {
-          ...node.data,
-          isExpanded: expandedNodes.has(node.id),
-        },
-      }))
-  }, [allNodes, expandedNodes])
-
-  const visibleEdges = useMemo(() => {
-    if (allEdges.length === 0) return []
-    const visibleNodeIds = new Set(visibleNodes.map((n: any) => n.id))
-    return allEdges
-      .filter((edge: any) => {
-        return visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target)
-      })
-      .map((edge: any) => ({
-        ...edge,
-        type: 'smoothstep',
-        animated: false,
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: '#8a2be2',
-        },
-        style: {
-          stroke: '#8a2be2',
-          strokeWidth: 2,
-        },
-      }))
-  }, [allEdges, visibleNodes])
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(visibleNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(visibleEdges)
-
-  useEffect(() => {
-    if (visibleNodes.length > 0) {
-      setNodes(visibleNodes)
-    }
-  }, [visibleNodes, setNodes])
-
-  useEffect(() => {
-    if (visibleEdges.length > 0) {
-      setEdges(visibleEdges)
-    }
-  }, [visibleEdges, setEdges])
-
-  const onNodeClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
-      event.stopPropagation()
-      
-      const topicData = roadmapData?.topicMap?.[node.id]
-      
-      if (topicData?.children && topicData.children.length > 0) {
-        setExpandedNodes((prev) => {
-          const newSet = new Set(prev)
-          if (newSet.has(node.id)) {
-            newSet.delete(node.id)
-          } else {
-            newSet.add(node.id)
-          }
-          return newSet
-        })
-      }
-
-      if (topicData) {
-        onTopicSelect(topicData.id || null, node.id)
+  const handleToggle = useCallback((topicId: string) => {
+    setExpandedTopics((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(topicId)) {
+        newSet.delete(topicId)
       } else {
-        onTopicSelect(null, null)
+        newSet.add(topicId)
       }
+      return newSet
+    })
+  }, [])
+
+  const handleSelect = useCallback(
+    (topic: TopicData) => {
+      setSelectedTopicId(topic.id)
+      // Find the nodeId from topicMap if available
+      let nodeId = topic.id
+      if (roadmapData?.topicMap) {
+        const found = Object.entries(roadmapData.topicMap).find(
+          ([_, data]: [string, any]) => data.id === topic.id
+        )
+        if (found) {
+          nodeId = found[0]
+        }
+      }
+      onTopicSelect(topic.id, nodeId)
     },
     [onTopicSelect, roadmapData]
   )
 
-  const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  )
-
-  if (!roadmapData?.flowData || allNodes.length === 0) {
+  if (!roadmapData?.topics || roadmapData.topics.length === 0) {
     return (
-      <div style={{ 
-        width: '100%', 
-        height: '100%', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        color: 'rgba(255, 255, 255, 0.5)',
-        fontSize: '1rem'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}></div>
-          <p>No roadmap data available</p>
-        </div>
+      <div className={styles.emptyState}>
+        <p>No roadmap data available</p>
       </div>
     )
   }
 
   return (
-    <div style={{ width: '100%', height: '100%', flex: 1, position: 'relative' }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeClick={onNodeClick}
-        fitView
-        fitViewOptions={{ padding: 0.3, maxZoom: 1.2, includeHiddenNodes: false }}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
-        minZoom={0.3}
-        maxZoom={1.5}
-        nodesDraggable={true}
-        nodesConnectable={false}
-        elementsSelectable={true}
-        proOptions={{ hideAttribution: true }}
-        nodeOrigin={[0.5, 0.5]}
-      >
-        <Background 
-          color="rgba(138, 43, 226, 0.1)"
-          gap={25}
-          size={1}
-          variant="dots"
-        />
-        <Controls 
-          showInteractive={true}
-          style={{
-            button: {
-              backgroundColor: 'rgba(20, 10, 40, 0.95)',
-              border: '1px solid rgba(138, 43, 226, 0.3)',
-              color: 'white',
-              width: '32px',
-              height: '32px',
-            },
-          }}
-        />
-        <MiniMap
-          nodeColor={(node) => {
-            const levelColors: Record<string, string> = {
-              beginner: '#10b981',
-              intermediate: '#3b82f6',
-              advanced: '#8b5cf6',
-            }
-            return levelColors[node.data?.level] || '#6b7280'
-          }}
-          style={{
-            backgroundColor: 'rgba(20, 10, 40, 0.9)',
-            border: '1px solid rgba(138, 43, 226, 0.3)',
-          }}
-          maskColor="rgba(0, 0, 0, 0.5)"
-          pannable
-          zoomable
-        />
-      </ReactFlow>
+    <div className={styles.roadmapContainer}>
+      <div className={styles.roadmapContent}>
+        {roadmapData.topics.map((topic) => (
+          <TopicCard
+            key={topic.id}
+            topic={topic}
+            level={0}
+            isExpanded={expandedTopics.has(topic.id)}
+            onToggle={() => handleToggle(topic.id)}
+            onSelect={() => handleSelect(topic)}
+            selectedTopicId={selectedTopicId}
+            expandedTopics={expandedTopics}
+            setExpandedTopics={setExpandedTopics}
+          />
+        ))}
+      </div>
     </div>
   )
 }

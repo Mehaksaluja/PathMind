@@ -150,8 +150,10 @@ export default function Dashboard() {
       }
       
       if (response.ok && data.roadmap) {
-        setRoadmapData(data.roadmap)
-        setShowWelcome(false)
+        // Save roadmap to localStorage
+        localStorage.setItem('currentRoadmap', JSON.stringify(data.roadmap))
+        // Navigate to roadmap page
+        router.push('/dashboard/roadmap')
       } else {
         alert(data.error || 'Failed to generate roadmap. Please try again.')
       }
